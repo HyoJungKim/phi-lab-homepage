@@ -3,15 +3,26 @@
 /*
  * PHI Lab — minimal redesign tokens.
  * Goal: MIT/Stanford research-lab feel. Almost no decoration; readability first.
- * Body 17px / line-height 1.7. Single brand blue (#1279BE) for links only.
+ * Body 17px / line-height 1.7.
+ * Palette = 가톨릭대학교 UI 시그니처: 가대 Blue(Pantone 661C #0C2E86) 주조색,
+ * 가대 Gold(875C)·Beige(7499C)·Warm Gray(11C) 보조색.
  */
 @theme {
-  --color-brand-50:  #ebf3fa;
-  --color-brand-100: #d4e7f5;
-  --color-brand-200: #a4cbe9;
-  --color-brand-700: #1279be;
-  --color-brand-800: #0d5e94;
-  --color-brand-900: #08446b;
+  --color-brand-50:  #eef1f9;
+  --color-brand-100: #d9e0f2;
+  --color-brand-200: #aebde2;
+  --color-brand-700: #0c2e86;
+  --color-brand-800: #09236a;
+  --color-brand-900: #061a4e;
+
+  --color-gold-100: #f0e7cf;
+  --color-gold-600: #a6803b;
+  --color-gold-700: #8a6a2f;
+
+  --color-beige-50: #f8f4e6;
+
+  --color-wgray-600: #7d6f58;
+  --color-wgray-700: #60513a;
 
   --color-ink:   #1a1a1a;
   --color-muted: #555555;

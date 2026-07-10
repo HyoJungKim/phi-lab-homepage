@@ -46,8 +46,8 @@ function Header() {
 
   return (
     <header className="border-b border-rule">
-      {/* 상단 검정 띠 — 좌: 대학명 / 우: 로그인 (full width) */}
-      <div className="bg-ink text-white text-[13px]">
+      {/* 상단 가대 블루 띠 — 좌: 대학명 / 우: 로그인 (full width) */}
+      <div className="bg-brand-700 text-white text-[13px]">
         <div className="px-6 py-1.5 flex items-center justify-between">
           <a href="https://www.catholic.ac.kr" target="_blank" rel="noopener noreferrer" className="text-white/90 hover:text-white no-underline">
             가톨릭대학교
@@ -92,7 +92,7 @@ function Header() {
           <NavLinks
             linkClass={({ isActive }) =>
               isActive
-                ? 'text-ink underline underline-offset-[6px] decoration-1'
+                ? 'text-brand-700 underline underline-offset-[6px] decoration-[1.5px]'
                 : 'text-ink no-underline hover:underline'
             }
           />
