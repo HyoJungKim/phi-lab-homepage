@@ -39,3 +39,4 @@ build/
 # supabase CLI local state
 supabase/.branches/
 supabase/.temp/
+test-results/

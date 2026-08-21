@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연구실 홈페이지 리뉴얼</title>
+
+<!-- 폰트: 제목 Black Han Sans, 본문 Gothic A1, 숫자/라벨 Archivo -->
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;500;700&family=Archivo:wght@500;800&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   THEME
+   흰 바탕, 검정 글자, 빨강은 강조에만 사용
+   =========================================== */
+:root {
+    --ink: #111111;
+    --paper: #ffffff;
+    --red: #ff3300;
+    --gray: #555555;
+    --hair: #111111;
+    --font-display: 'Black Han Sans', sans-serif;
+    --font-body: 'Gothic A1', sans-serif;
+    --font-label: 'Archivo', sans-serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --stage-bg: #111111;
+    --slide-bg: #ffffff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   =========================================== */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.deck-controls {
+    position: fixed;
+    right: 18px;
+    bottom: 14px;
+    z-index: 1000;
+}
+
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   등장 애니메이션 (짧고 절제된 페이드)
+   =========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .5s var(--ease), transform .5s var(--ease);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal:nth-child(1) { transition-delay: .05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: .15s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: .25s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: .35s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: .45s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: .55s; }
+
+/* ===========================================
+   공통 슬라이드 골격
+   상단: 페이지 번호(왼쪽), PHI LAB(오른쪽), 가로선
+   =========================================== */
+.slide { font-family: var(--font-body); color: var(--ink); }
+
+.chrome-idx {
+    position: absolute; left: 96px; top: 72px;
+    font-family: var(--font-label); font-weight: 800; font-size: 32px;
+}
+.chrome-idx b { color: var(--red); font-weight: 800; }
+.chrome-brand {
+    position: absolute; right: 96px; top: 72px;
+    font-family: var(--font-label); font-weight: 800; font-size: 32px;
+}
+.chrome-brand i { font-style: normal; color: var(--red); }
+.chrome-rule {
+    position: absolute; left: 96px; right: 96px; top: 150px;
+    height: 2px; background: var(--hair);
+}
+
+/* 콘텐츠 영역 */
+.head {
+    position: absolute; left: 96px; top: 220px; right: 96px;
+}
+.head h2 {
+    font-family: var(--font-display); font-weight: 400;
+    font-size: 96px; line-height: 1.15; letter-spacing: -0.01em;
+}
+.content {
+    position: absolute; left: 96px; right: 96px; top: 420px;
+}
+
+/* 본문 문장: 크게, 넉넉한 행간 */
+.line {
+    font-size: 44px; font-weight: 500; line-height: 1.75; color: var(--ink);
+    max-width: 1500px;
+}
+.line + .line { margin-top: 28px; }
+.line.dim { color: var(--gray); }
+.line b { font-weight: 700; }
+.line .rd { color: var(--red); font-weight: 700; }
+
+/* 번호 리스트: 빨강 숫자 + 문장 */
+.nrow {
+    display: flex; align-items: baseline; gap: 40px;
+    padding: 34px 0; border-bottom: 2px solid var(--hair);
+    max-width: 1600px;
+}
+.nrow:first-child { border-top: 2px solid var(--hair); }
+.nrow .no {
+    font-family: var(--font-label); font-weight: 800; font-size: 52px;
+    color: var(--red); min-width: 70px; line-height: 1;
+}
+.nrow .tx { font-size: 44px; font-weight: 700; line-height: 1.5; }
+.nrow .tx small { display: block; font-size: 32px; font-weight: 500; color: var(--gray); margin-top: 6px; }
+/* 항목이 많은 슬라이드용 압축 간격 */
+.compact .nrow { padding: 22px 0; }
+
+/* Supabase 로고: 제목 오른쪽 상단 */
+.supa-logo { position: absolute; right: 96px; top: 214px; }
+
+/* 레포 링크: 클릭 가능한 박스 */
+.repo-link {
+    display: inline-block; margin-top: 24px;
+    font-family: var(--font-label); font-weight: 800; font-size: 40px;
+    color: var(--ink); text-decoration: none;
+    border: 3px solid var(--ink); padding: 20px 36px;
+}
+.repo-link:hover { background: var(--red); border-color: var(--red); color: #fff; }
+/* ===========================================
+   표지
+   =========================================== */
+.cover .gridline { position: absolute; background: var(--ink); }
+/* 세로선은 위아래 띠에만. 가운데 구간은 제목 글자를 가리지 않게 비운다 */
+.cover .v1 { left: 640px; top: 0; width: 2px; height: 200px; }
+.cover .v1b { left: 640px; top: 880px; width: 2px; height: 200px; }
+.cover .h1 { left: 0; top: 200px; width: 1920px; height: 2px; }
+.cover .h2 { left: 0; top: 880px; width: 1920px; height: 2px; }
+
+.cover .red-block {
+    position: absolute; left: 1280px; top: 200px; width: 640px; height: 680px;
+    background: var(--red);
+    transform-origin: top;
+}
+.slide.visible .red-block { animation: wipe .7s var(--ease) both; }
+@keyframes wipe { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.cover .red-block .phi {
+    position: absolute; right: 70px; bottom: 40px;
+    font-family: var(--font-label); font-weight: 800;
+    font-size: 360px; line-height: 1; color: #fff;
+}
+.cover .title {
+    position: absolute; left: 96px; top: 300px;
+    font-family: var(--font-display); font-size: 150px; line-height: 1.12;
+}
+.cover .sub {
+    position: absolute; left: 96px; top: 716px;
+    font-size: 40px; font-weight: 500; color: var(--gray);
+}
+.cover .meta {
+    position: absolute; left: 96px; top: 930px;
+    display: flex; gap: 80px; font-size: 30px; font-weight: 700;
+}
+.cover .meta i {
+    font-style: normal; color: var(--red); margin-right: 16px;
+    font-family: var(--font-label); font-weight: 800;
+}
+
+/* ===========================================
+   인용 슬라이드 (교수님의 부탁)
+   =========================================== */
+.quote {
+    font-size: 64px; font-weight: 700; line-height: 1.6;
+    max-width: 1500px;
+}
+.quote .rd { color: var(--red); }
+.quote-src { margin-top: 36px; font-size: 34px; font-weight: 500; color: var(--gray); }
+
+/* ===========================================
+   News / Posts 2단 비교
+   =========================================== */
+.two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    border-top: 2px solid var(--hair);
+    max-width: 1728px;
+}
+.two-col .col { padding: 44px 60px 36px 0; }
+.two-col .col + .col { border-left: 2px solid var(--hair); padding-left: 60px; padding-right: 0; }
+.two-col h3 {
+    font-family: var(--font-label); font-weight: 800; font-size: 60px;
+    margin-bottom: 28px;
+}
+.two-col h3 i { font-style: normal; color: var(--red); }
+.two-col p { font-size: 38px; font-weight: 500; line-height: 1.65; }
+.two-col p + p { margin-top: 14px; }
+.two-col .focus {
+    margin-top: 30px; font-size: 38px; font-weight: 700;
+}
+.two-col .focus i { font-style: normal; color: var(--red); }
+.below {
+    margin-top: 44px; padding-top: 32px; border-top: 2px solid var(--hair);
+    font-size: 42px; font-weight: 700; max-width: 1728px;
+}
+
+/* ===========================================
+   역할 표
+   =========================================== */
+.role-row {
+    display: grid; grid-template-columns: 560px 1fr; gap: 60px; align-items: baseline;
+    padding: 40px 0; border-bottom: 2px solid var(--hair);
+    max-width: 1700px;
+}
+.role-row:first-child { border-top: 2px solid var(--hair); }
+.role-row .who { font-family: var(--font-label); font-weight: 800; font-size: 44px; }
+.role-row .who span { color: var(--red); }
+.role-row .what { font-size: 40px; font-weight: 500; line-height: 1.6; }
+
+/* ===========================================
+   마지막 슬라이드
+   =========================================== */
+.ending .big {
+    position: absolute; left: 96px; top: 400px;
+    font-family: var(--font-display); font-size: 170px; line-height: 1.1;
+}
+.ending .small {
+    position: absolute; left: 96px; top: 660px;
+    font-size: 44px; font-weight: 500; color: var(--gray);
+}
+
+/* ===========================================
+   덱 컨트롤 (스테이지 밖 페이지 표시)
+   =========================================== */
+.deck-controls {
+    font-family: var(--font-label); font-weight: 500; font-size: 13px;
+    color: #999; letter-spacing: .1em; user-select: none;
+}
+
+/* ===========================================
+   인라인 편집 (좌상단 핫존 또는 E 키)
+   =========================================== */
+.edit-hotzone {
+    position: fixed; top: 0; left: 0; width: 80px; height: 80px;
+    z-index: 10000; cursor: pointer;
+}
+.edit-toggle {
+    position: fixed; top: 16px; left: 16px; z-index: 10001;
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid #444; background: #1d1d1d; color: #eee;
+    font-size: 18px; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .3s ease;
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--red); border-color: var(--red); }
+body.editing [data-edit] { outline: 2px dashed rgba(255,51,0,.5); outline-offset: 6px; cursor: text; }
+</style>
+</head>
+<body>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+    <!-- 01 표지 -->
+    <section class="slide cover active">
+        <div class="gridline v1"></div>
+        <div class="gridline v1b"></div>
+        <div class="gridline h1"></div>
+        <div class="gridline h2"></div>
+        <div class="chrome-idx">01 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="red-block"><div class="phi">φ</div></div>
+        <h1 class="title reveal" data-edit>연구실 홈페이지<br>리뉴얼</h1>
+        <p class="sub reveal" data-edit>7/2(목) PHI Lab Meeting</p>
+        <div class="meta reveal">
+            <div data-edit><i>발표</i>박태원</div>
+            <div data-edit><i>일시</i>2026. 7</div>
+        </div>
+    </section>
+
+    <!-- 02 UI는 심플하게 -->
+    <section class="slide">
+        <div class="chrome-idx">02 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>화면은 일단 심플하게</h2></div>
+        <div class="content">
+            <p class="line reveal" data-edit>나중에 UI를 개선하기 쉽도록, <b>최대한 심플한 버전</b>으로 바꿨습니다.</p>
+            <p class="line reveal" data-edit>글, 사진, 논문 목록 같은 내용은 기존 사이트에서 그대로 옮겼습니다.</p>
+            <p class="line dim reveal" data-edit>UI 꾸미는 일은 뒤로 미루고, 관리자 페이지와 글 작성 기능을 먼저 구현했습니다.</p>
+        </div>
+    </section>
+
+    <!-- 03 Admin 페이지 구성 -->
+    <section class="slide">
+        <div class="chrome-idx">03 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>관리자 페이지 기획</h2></div>
+        <div class="content">
+            <p class="line reveal" data-edit>처음엔 아예 다른 서비스로 분리할지 고민했습니다.</p>
+            <p class="line reveal" data-edit>결론은 <b>하나의 코드에서 주소만 나누기</b>. 사이트 주소 뒤에 <span class="rd">/admin</span>을 붙이면 관리 페이지가 나옵니다.</p>
+            <p class="line dim reveal" data-edit>따로 만들면 관리할 게 두 배가 되고, 그만큼 복잡해집니다.</p>
+            <a class="repo-link reveal" href="https://phi-lab-homepage.onrender.com/admin" target="_blank" rel="noopener" data-edit>phi-lab-homepage.onrender.com/admin</a>
+        </div>
+    </section>
+
+    <!-- 04 Supabase -->
+    <section class="slide">
+        <div class="chrome-idx">04 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>데이터베이스는 Supabase</h2></div>
+        <!-- Supabase 공식 로고 마크 -->
+        <div class="supa-logo reveal" aria-label="Supabase 로고">
+            <svg width="120" height="124" viewBox="0 0 109 113" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0625L99.1935 40.0625C107.384 40.0625 111.952 49.5226 106.859 55.9372L63.7076 110.284Z" fill="url(#supa0)"/>
+                <path d="M63.7076 110.284C60.8481 113.885 55.0502 111.912 54.9813 107.314L53.9738 40.0625L99.1935 40.0625C107.384 40.0625 111.952 49.5226 106.859 55.9372L63.7076 110.284Z" fill="url(#supa1)" fill-opacity="0.2"/>
+                <path d="M45.317 2.07103C48.1765 -1.53037 53.9745 0.442937 54.0434 5.041L54.4849 72.2922H9.83113C1.64038 72.2922 -2.92775 62.8321 2.1655 56.4175L45.317 2.07103Z" fill="#3ECF8E"/>
+                <defs>
+                    <linearGradient id="supa0" x1="53.9738" y1="54.9738" x2="94.1635" y2="71.8293" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#249361"/><stop offset="1" stop-color="#3ECF8E"/>
+                    </linearGradient>
+                    <linearGradient id="supa1" x1="36.1558" y1="30.5779" x2="54.4844" y2="65.0804" gradientUnits="userSpaceOnUse">
+                        <stop/><stop offset="1" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+        <div class="content compact" style="top:380px">
+            <p class="line reveal" style="margin-bottom:28px" data-edit>내부적으로 <b>PostgreSQL</b>을 쓰는 SaaS입니다. 인증 기능을 포함해 여러 기능을 제공합니다.</p>
+            <div class="nrow reveal"><div class="no">1</div><div class="tx" data-edit>직관적이고 간편합니다. AI가 다루기도 쉽습니다.</div></div>
+            <div class="nrow reveal"><div class="no">2</div><div class="tx" data-edit>무료이고, 기능이 많습니다 <small>데이터베이스에 로그인 인증, 파일 저장소까지 한 번에</small></div></div>
+            <div class="nrow reveal"><div class="no">3</div><div class="tx" data-edit>사람들이 많이 씁니다 <small>자료가 많아 문제가 생겨도 해결이 빠릅니다</small></div></div>
+        </div>
+    </section>
+
+    <!-- 05 로그인 -->
+    <section class="slide">
+        <div class="chrome-idx">05 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>로그인은 구글로</h2></div>
+        <div class="content compact" style="top:360px">
+            <p class="line reveal" style="margin-bottom:24px" data-edit>비밀번호를 만들어 나눠주는 것보다 <b>구글 로그인(OAuth)</b>이 더 안전하고 편합니다.</p>
+            <div class="nrow reveal"><div class="no">1</div><div class="tx" data-edit>이메일을 전달받습니다</div></div>
+            <div class="nrow reveal"><div class="no">2</div><div class="tx" data-edit>그 이메일 앞으로 초대 링크를 만들어 보냅니다</div></div>
+            <div class="nrow reveal"><div class="no">3</div><div class="tx" data-edit>초대 링크에서 구글 로그인을 합니다 <small>초대받은 이메일과 다르면 로그인이 안 됩니다</small></div></div>
+            <p class="line reveal" style="margin-top:28px; max-width:none; white-space:nowrap" data-edit><span class="rd">초대 링크 + 이메일 확인.</span> 외부에서 마음대로 못 들어오게 이중으로 확인합니다.</p>
+        </div>
+    </section>
+
+    <!-- 06 권한 -->
+    <section class="slide">
+        <div class="chrome-idx">06 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>누가 무엇을 할 수 있나</h2></div>
+        <div class="content" style="top:400px">
+            <p class="line reveal" style="margin-bottom:44px" data-edit>모든 게시물 관리는 <b>admin 페이지</b>에서 합니다. 역할에 따라 쓸 수 있는 기능이 다릅니다.</p>
+            <div class="role-row reveal">
+                <div class="who" data-edit>professor <span>·</span> admin</div>
+                <div class="what" data-edit>사이트 전체 관리. 멤버, 논문, 강의, 계정과 초대까지</div>
+            </div>
+            <div class="role-row reveal">
+                <div class="who" data-edit>researcher <span>·</span> alumni</div>
+                <div class="what" data-edit>내 프로필 수정, News와 Posts 작성</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 07 News / Posts -->
+    <section class="slide">
+        <div class="chrome-idx">07 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>News와 Posts</h2></div>
+        <div class="content" style="top:400px">
+            <div class="two-col reveal">
+                <div class="col">
+                    <h3 data-edit>News<i>.</i></h3>
+                    <p data-edit>연구실의 성과, 진행한 프로젝트,<br>공식 일정을 기록합니다.</p>
+                    <p data-edit>연구실을 자랑할 만한 것들이<br>여기에 쌓입니다.</p>
+                    <p class="focus" data-edit><i>외부 사람들</i>이 보는 데 초점</p>
+                </div>
+                <div class="col">
+                    <h3 data-edit>Posts<i>.</i></h3>
+                    <p data-edit>서로 유용하다고 생각하는 자료를<br>공유합니다.</p>
+                    <p data-edit>공지나 나누고 싶은 이야기도<br>여기에 씁니다.</p>
+                    <p class="focus" data-edit><i>연구실 사람들</i>이 보는 데 초점</p>
+                </div>
+            </div>
+            <p class="below reveal" data-edit>둘 다 공개 데이터입니다. 로그인 없이 누구나 볼 수 있습니다.</p>
+        </div>
+    </section>
+
+    <!-- 08 버그 제보 -->
+    <section class="slide">
+        <div class="chrome-idx">08 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <div class="head"><h2 class="reveal" data-edit>오류나 버그를 발견하면</h2></div>
+        <div class="content">
+            <p class="line reveal" data-edit>사용하면서 불편한 점이 있으면 <b>편하게 얘기해주세요.</b></p>
+            <p class="line reveal" data-edit>말씀해주시는 대로 하나씩 고쳐서 개선해가겠습니다.</p>
+            <p class="line dim reveal" style="margin-top:56px" data-edit>코드 개선은 이제 교수님 계정의 레포에서 진행합니다. 관심 있는 분들은 참고해주세요.</p>
+            <a class="repo-link reveal" href="https://github.com/HyoJungKim/phi-lab-homepage" target="_blank" rel="noopener" data-edit>github.com/HyoJungKim/phi-lab-homepage</a>
+        </div>
+    </section>
+
+    <!-- 09 마무리 -->
+    <section class="slide ending">
+        <div class="chrome-idx">09 <b>/</b> 09</div>
+        <div class="chrome-brand">PHI LAB<i>.</i></div>
+        <div class="chrome-rule"></div>
+        <h2 class="big reveal" data-edit>감사합니다<span style="color:var(--red)">.</span></h2>
+        <p class="small reveal" data-edit>궁금한 점 질문 주시면 감사드리겠습니다.</p>
+    </section>
+
+</main>
+</div>
+
+<!-- 페이지 표시 (스테이지 밖) -->
+<div class="deck-controls" id="pageCounter">1 / 9</div>
+
+<!-- 인라인 편집 토글 -->
+<div class="edit-hotzone" id="editHotzone"></div>
+<button class="edit-toggle" id="editToggle" title="편집 모드 (E)">✎</button>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   키보드(화살표, 스페이스, PgUp/PgDn), 휠, 터치 스와이프
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.stage = document.getElementById('deckStage');
+        this.counter = document.getElementById('pageCounter');
+        this.current = 0;
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupWheelNav();
+        this.setupTouchNav();
+        this.showSlide(0);
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * f) / 2;
+            const y = (window.innerHeight - 1080 * f) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute && e.target.getAttribute('contenteditable')) return;
+            if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); this.next(); }
+            else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
+            else if (e.key === 'Home') this.showSlide(0);
+            else if (e.key === 'End') this.showSlide(this.slides.length - 1);
+        });
+    }
+
+    setupWheelNav() {
+        let lock = false;
+        window.addEventListener('wheel', (e) => {
+            if (document.body.classList.contains('editing')) return;
+            if (lock) return;
+            if (Math.abs(e.deltaY) < 30) return;
+            lock = true;
+            setTimeout(() => { lock = false; }, 500);
+            e.deltaY > 0 ? this.next() : this.prev();
+        }, { passive: true });
+    }
+
+    setupTouchNav() {
+        let startX = null;
+        window.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        window.addEventListener('touchend', (e) => {
+            if (startX === null) return;
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 60) dx < 0 ? this.next() : this.prev();
+            startX = null;
+        }, { passive: true });
+    }
+
+    next() { this.showSlide(this.current + 1); }
+    prev() { this.showSlide(this.current - 1); }
+
+    showSlide(i) {
+        this.current = Math.max(0, Math.min(i, this.slides.length - 1));
+        this.slides.forEach((s, k) => {
+            s.classList.toggle('active', k === this.current);
+            s.classList.toggle('visible', k === this.current);
+        });
+        this.counter.textContent = (this.current + 1) + ' / ' + this.slides.length;
+    }
+}
+
+const deck = new SlidePresentation();
+
+/* ===========================================
+   INLINE EDITOR
+   좌상단 핫존 호버 또는 E 키로 편집 모드.
+   수정 내용은 localStorage에 자동 저장, Ctrl+S로 파일 다운로드.
+   =========================================== */
+const STORE_KEY = 'phi-slides-edits-v2';
+
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.nodes = document.querySelectorAll('[data-edit]');
+        this.nodes.forEach((n, i) => n.dataset.editId = i);
+        this.restore();
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.body.classList.toggle('editing', this.isActive);
+        document.getElementById('editToggle').classList.toggle('active', this.isActive);
+        this.nodes.forEach((n) => {
+            if (this.isActive) {
+                n.setAttribute('contenteditable', 'true');
+                n.addEventListener('input', this.saveSoon);
+            } else {
+                n.removeAttribute('contenteditable');
+            }
+        });
+    }
+
+    saveSoon = () => {
+        clearTimeout(this._t);
+        this._t = setTimeout(() => this.save(), 400);
+    };
+
+    save() {
+        const data = {};
+        this.nodes.forEach((n) => { data[n.dataset.editId] = n.innerHTML; });
+        localStorage.setItem(STORE_KEY, JSON.stringify(data));
+    }
+
+    restore() {
+        try {
+            const data = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+            this.nodes.forEach((n) => {
+                if (data[n.dataset.editId] !== undefined) n.innerHTML = data[n.dataset.editId];
+            });
+        } catch { /* 저장본이 없으면 원본 유지 */ }
+    }
+
+    exportFile() {
+        this.save();
+        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'phi-lab-homepage-presentation.html';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+}
+
+const editor = new InlineEditor();
+
+/* 편집 토글 상호작용: 버튼 클릭, 핫존 호버(400ms 유예), 핫존 클릭, E 키 */
+const hotzone = document.getElementById('editHotzone');
+const editToggle = document.getElementById('editToggle');
+let hideTimeout = null;
+
+editToggle.addEventListener('click', () => editor.toggleEditMode());
+hotzone.addEventListener('click', () => editor.toggleEditMode());
+hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); editToggle.classList.add('show'); });
+hotzone.addEventListener('mouseleave', () => {
+    hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400);
+});
+editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+editToggle.addEventListener('mouseleave', () => {
+    hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400);
+});
+document.addEventListener('keydown', (e) => {
+    if ((e.key === 'e' || e.key === 'E') && !(e.target.getAttribute && e.target.getAttribute('contenteditable'))) {
+        editor.toggleEditMode();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); editor.exportFile(); }
+});
+</script>
+</body>
+</html>

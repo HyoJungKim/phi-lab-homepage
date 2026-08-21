@@ -1,7 +1,8 @@
 import { index, route, layout } from '@react-router/dev/routes'
 
 export default [
-  // 공개 페이지 (헤더/푸터 공통 Layout) — prerender 대상(SSG)
+  // 공개 페이지 (헤더/푸터 공통 Layout) — 전면 CSR (2026-07-02 prerender 폐지,
+  // admin 저장이 재배포 없이 즉시 반영되도록 clientLoader 로 로드)
   layout('components/Layout.jsx', [
     index('pages/Home.jsx'),
     route('about', 'pages/About.jsx'),
@@ -10,8 +11,6 @@ export default [
     route('research', 'pages/Research.jsx'),
     route('publications', 'pages/Publications.jsx'),
     route('lectures', 'pages/Lectures.jsx'),
-    // News/Posts 는 CSR — prerender(react-router.config.js) 목록에 넣지 않는다.
-    // 글은 admin 에서 올리는 즉시 보여야 해서 빌드에 굽지 않음.
     route('news', 'pages/News.jsx'),
     route('news/:id', 'pages/NewsItem.jsx'),
     route('posts', 'pages/Posts.jsx'),

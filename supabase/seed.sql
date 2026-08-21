@@ -5,6 +5,6 @@
 -- =============================================================================
 
 insert into public.admin_users (email, role, display_name) values
-  ('guboc11@gmail.com',          'admin',     '박태우'),
+  ('guboc11@gmail.com',          'admin',     '박태원'),
   ('hyojung.kim@catholic.ac.kr', 'professor', '김효정 교수')
 on conflict (email) do nothing;

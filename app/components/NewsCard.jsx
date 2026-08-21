@@ -5,6 +5,7 @@ import PostBody from './PostBody'
 // 입력: { title, publishedAt, bodyJson }
 
 // 날짜를 숫자 '년. 월. 일.' 로 (Posts 게시판과 동일 스타일)
+// eslint-disable-next-line react-refresh/only-export-components -- 컴포넌트 파일이 공유 날짜 유틸도 export
 export function formatNewsDate(iso) {
   if (!iso) return ''
   const d = new Date(iso)

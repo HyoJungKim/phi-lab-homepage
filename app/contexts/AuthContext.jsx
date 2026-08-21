@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- context 모듈(Provider + useAuth 훅), Fast Refresh 대상 아님 */
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useLocation, useLoaderData } from 'react-router'
 import { fetchMembers } from '../lib/publicData'
 
-export async function loader() {
+// CSR: 브라우저에서 로드 — admin 저장이 재배포 없이 즉시 반영된다.
+export async function clientLoader() {
   return fetchMembers()
 }
 
@@ -165,14 +166,14 @@ function TabLink({ label, active, count, onClick }) {
 
 export default function Members() {
   const [activeTab, setActiveTab] = useState(TABS[0])
-  const data = useLoaderData()
+  const data = useLoaderData() ?? {}
   const location = useLocation()
 
-  const { roleOrder = [], piRole } = data
+  const { current = [], alumni = [], roleOrder = [], piRole } = data
   // PI(역할 목록 맨 앞)는 별도 섹션. 과거 한글 값('지도교수')도 함께 인정.
   const isPi = (m) => m.role === piRole || m.role === '지도교수'
-  const professor = data.current.find(isPi)
-  const rest = data.current.filter((m) => !isPi(m))
+  const professor = current.find(isPi)
+  const rest = current.filter((m) => !isPi(m))
 
   // 역할별 그룹 — member_roles 의 순서대로, 목록에 없는 역할은 맨 뒤에 등장 순서로.
   const seen = new Set()
@@ -184,8 +185,6 @@ export default function Members() {
     .map((role) => ({ role, members: rest.filter((m) => m.role === role) }))
     .filter((g) => g.members.length > 0)
   const noRole = rest.filter((m) => !m.role)   // 역할 미지정
-
-  const alumni = data.alumni
 
   // Hash navigation: if URL has #<id>, force the tab that contains that
   // member into view, then smooth-scroll to the card.
@@ -209,7 +208,7 @@ export default function Members() {
         <TabLink
           label="Current Members"
           active={activeTab === 'Current Members'}
-          count={data.current.length}
+          count={current.length}
           onClick={() => setActiveTab('Current Members')}
         />
         <TabLink

@@ -1,11 +1,9 @@
 // react-router framework 모드.
-// ssr:false = SPA 모드. prerender 경로는 빌드 시점에 loader 를 실행해 정적 HTML
-// 생성(브라우저 없이 Node 렌더 = 정석 SSG). admin/posts 등 비-prerender 는
-// SPA fallback 으로 클라이언트 렌더.
+// ssr:false + prerender 없음 = 순수 SPA. 모든 페이지가 브라우저에서 데이터를
+// 로드(clientLoader)하므로 admin 저장이 재배포 없이 즉시 반영된다.
+// (이전에는 일부 페이지를 빌드 시점에 미리 렌더했으나, 콘텐츠 갱신마다
+//  재배포가 필요해 B안(전면 CSR)으로 전환 — 2026-07-02)
 export default {
   ssr: false,
   basename: process.env.VITE_BASE || '/',
-  async prerender() {
-    return ['/', '/about', '/members', '/professor', '/research', '/publications', '/lectures']
-  },
 }

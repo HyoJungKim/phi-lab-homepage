@@ -3,7 +3,6 @@ import { supabase } from '../../lib/supabase'
 import { PageHeader, Button, Table, Modal, Field, TextInput, TextArea, Select, ErrorBanner, useConfirm, useDeleteMode } from '../../components/admin/AdminUI'
 import AdminRoles from './AdminRoles'
 
-const STATUSES = ['current', 'alumni']
 const DEGREES = ['학부생', '학사', '석사', '박사', '박사수료']
 
 function emptyMember() {

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+/* eslint-disable react-refresh/only-export-components -- 공유 admin UI 모듈(컴포넌트+훅 혼합), Fast Refresh 대상 아님 */
+import { useState } from 'react'
 
 // 공통 admin 페이지 헤더
 export function PageHeader({ title, subtitle, actions }) {

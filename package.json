@@ -12,7 +12,12 @@
     "build": "react-router build",
     "typecheck": "react-router typegen",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration --no-file-parallelism",
+    "test": "pnpm test:unit && pnpm test:integration",
+    "test:e2e": "playwright test",
+    "test:all": "pnpm test && pnpm test:e2e"
   },
   "dependencies": {
     "@blocknote/core": "^0.51.4",
@@ -35,6 +40,7 @@
   "devDependencies": {
     "@blocknote/server-util": "^0.51.4",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.1",
     "@react-router/dev": "^7.15.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -43,7 +49,8 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "vitest": "^4.1.9"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

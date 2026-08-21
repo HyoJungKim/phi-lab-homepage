@@ -108,7 +108,7 @@ export default function AdminNews() {
             <Button onClick={() => setStatusFilter('published')} primary={statusFilter==='published'}>발행</Button>
             <Button onClick={() => setStatusFilter('draft')} primary={statusFilter==='draft'}>초안</Button>
             {deleteModeToggle}
-            <Button primary onClick={() => { setIsNew(true); setEdit(emptyNews(user.email)) }}>+ 새 뉴스</Button>
+            <Button primary onClick={openNew}>+ 새 뉴스</Button>
           </>
         }
       />

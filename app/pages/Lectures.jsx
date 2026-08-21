@@ -2,7 +2,8 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router'
 import { fetchLectures } from '../lib/publicData'
 
-export async function loader() {
+// CSR: 브라우저에서 로드 — admin 저장이 재배포 없이 즉시 반영된다.
+export async function clientLoader() {
   return fetchLectures()
 }
 
@@ -216,7 +217,7 @@ function SemesterSection({ semester, courses }) {
 }
 
 export default function Lectures() {
-  const lecturesData = useLoaderData()
+  const lecturesData = useLoaderData() ?? []
   const [lightbox, setLightbox] = useState(null)
   const openLightbox = (images, index) => setLightbox({ images, index })
 
@@ -232,9 +233,13 @@ export default function Lectures() {
           {lecturesData.length} total · {gradCount} graduate · {undergradCount} undergraduate
         </p>
 
-        {grouped.map(([semester, courses]) => (
-          <SemesterSection key={semester} semester={semester} courses={courses} />
-        ))}
+        {grouped.length > 0 ? (
+          grouped.map(([semester, courses]) => (
+            <SemesterSection key={semester} semester={semester} courses={courses} />
+          ))
+        ) : (
+          <p className="text-muted py-10">No courses to display yet.</p>
+        )}
       </div>
       <Lightbox state={lightbox} setState={setLightbox} onClose={() => setLightbox(null)} />
     </LightboxContext.Provider>

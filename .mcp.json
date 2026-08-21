@@ -6,9 +6,9 @@
         "@playwright/mcp@latest"
       ]
     },
-    "supabase-phi-lab": {
+    "supabase-phi-lab-homepage": {
       "type": "http",
-      "url": "https://mcp.supabase.com/mcp?project_ref=qzmivzxyhrgiysmvoqmk"
+      "url": "https://mcp.supabase.com/mcp?project_ref=qtzmsjgismpxxtwgzfmp"
     }
   }
 }

@@ -28,6 +28,16 @@ export function Layout({ children }) {
   )
 }
 
+// SPA 첫 로드에서 clientLoader 데이터가 오기 전 잠깐 표시.
+// (SPA 모드에선 root 에만 둘 수 있다)
+export function HydrateFallback() {
+  return (
+    <div className="mx-auto max-w-[1200px] px-6 py-12">
+      <p className="text-muted">Loading…</p>
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <AuthProvider>

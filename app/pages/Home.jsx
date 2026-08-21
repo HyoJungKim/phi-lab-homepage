@@ -1,7 +1,8 @@
 import { useLoaderData } from 'react-router'
 import { fetchHomeStats, fetchCollaboratingInstitutions } from '../lib/publicData'
 
-export async function loader() {
+// CSR: 브라우저에서 로드 — admin 저장이 재배포 없이 즉시 반영된다.
+export async function clientLoader() {
   const [stats, collaborators] = await Promise.all([
     fetchHomeStats(),
     fetchCollaboratingInstitutions(),
@@ -73,11 +74,11 @@ const PILLARS = [
 ]
 
 export default function Home() {
-  const data = useLoaderData()
-  const collaborators = data.collaborators
+  const data = useLoaderData() ?? {}
+  const collaborators = data.collaborators ?? []
   const collaboratorsCount = collaborators.length
-  const activeProjectsCount = data.activeResearchCount
-  const publicationsCount = data.publicationsCount
+  const activeProjectsCount = data.activeResearchCount ?? 0
+  const publicationsCount = data.publicationsCount ?? 0
 
   const stats = [
     { value: activeProjectsCount, label: 'current research' },
