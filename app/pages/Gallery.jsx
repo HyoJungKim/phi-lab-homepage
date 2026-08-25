@@ -32,25 +32,47 @@ export default function Gallery() {
   }, [])
 
   // 앨범별 묶음. album 없으면 'Lab Life'.
-  // 앨범 '간' 순서 = 각 앨범의 '대표날짜' 역순(최신 이벤트가 위로).
-  //   대표날짜 = 앨범 내 사진의 가장 빠른 날짜(촬영일 우선, 없으면 생성일).
-  //   → admin 에서 촬영일만 바꿔도 앨범 순서를 조정할 수 있다.
-  //   (taken_on='YYYY-MM-DD' / created_at=ISO 타임스탬프 모두 사전순=시간순 비교 가능)
+  // 같은 앨범 이름이라도 촬영 '월'이 다르면 따로 묶는다 — 회식처럼 같은 이름으로
+  // 반복되는 행사가 한 덩어리로 합쳐지지 않게.
+  //   단, 한 앨범 안에 실제로 서로 다른 달이 있을 때만 나눈다. 촬영일이 비어 있는
+  //   사진이 많은 앨범(GHMW 2026 등)을 무조건 월로 쪼개면 멀쩡한 앨범이 흩어지므로,
+  //   날짜 없는 사진은 그 앨범의 대표 달에 붙인다.
+  // 앨범 '간' 순서 = 대표날짜(그 묶음에서 가장 빠른 날짜) 역순 → 최신 행사가 위로.
   // 앨범 '안'의 사진은 fetch 순서(촬영일 과거→현재) 유지.
   const groups = (() => {
     if (!items) return []
-    const map = new Map()
-    for (const it of items) {
-      const key = it.album || 'Lab Life'
-      if (!map.has(key)) map.set(key, [])
-      map.get(key).push(it)
-    }
+    const monthOf = (it) => (it.takenOn ? String(it.takenOn).slice(0, 7) : null)
     const repDate = (arr) => arr.reduce((min, it) => {
       const d = it.takenOn || it.createdAt
       return min === '' || d < min ? d : min
     }, '')
-    return [...map.entries()].sort(([, a], [, b]) => {
-      const ra = repDate(a), rb = repDate(b)
+
+    const byAlbum = new Map()
+    for (const it of items) {
+      const name = it.album || 'Lab Life'
+      if (!byAlbum.has(name)) byAlbum.set(name, [])
+      byAlbum.get(name).push(it)
+    }
+
+    const out = []
+    for (const [name, arr] of byAlbum) {
+      const months = [...new Set(arr.map(monthOf).filter(Boolean))]
+      if (months.length <= 1) {
+        out.push({ key: name, album: name, items: arr })
+        continue
+      }
+      const primary = months.sort()[0]   // 날짜 없는 사진이 붙을 대표 달
+      const sub = new Map()
+      for (const it of arr) {
+        const m = monthOf(it) ?? primary
+        if (!sub.has(m)) sub.set(m, [])
+        sub.get(m).push(it)
+      }
+      for (const [m, list] of sub) out.push({ key: `${name}::${m}`, album: name, items: list })
+    }
+
+    return out.sort((a, b) => {
+      const ra = repDate(a.items), rb = repDate(b.items)
       return ra < rb ? 1 : ra > rb ? -1 : 0
     })
   })()
@@ -66,10 +88,10 @@ export default function Gallery() {
       {!error && items === null && <p className="text-muted">Loading…</p>}
       {!error && items?.length === 0 && <p className="text-muted">No photos yet.</p>}
 
-      {groups.map(([album, arr], gi) => {
+      {groups.map(({ key, album, items: arr }, gi) => {
         const images = arr.map((it) => ({ src: it.imageUrl, caption: it.caption }))
         return (
-          <section key={album} className={gi === 0 ? '' : 'mt-12'}>
+          <section key={key} className={gi === 0 ? '' : 'mt-12'}>
             <h2 className="mb-4 flex items-center gap-3">
               <span className="inline-block h-[20px] w-[4px] rounded-full bg-gold-600" aria-hidden="true" />
               <span className="text-brand-900">{album}</span>
