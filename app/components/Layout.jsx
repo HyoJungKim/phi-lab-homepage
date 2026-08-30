@@ -22,7 +22,6 @@ const NAV_ROUTES = [
   { to: '/members', label: 'Members' },
   { to: '/about', label: 'About Lab' },
   { to: '/news', label: 'News' },
-  { to: '/posts', label: 'Posts' },
 ]
 
 const FOOTER = {
@@ -56,7 +55,10 @@ function DropChild({ child, onClick }) {
 }
 
 // 로그인(화이트리스트) 구성원에게만 보이는 메뉴 — 외부 방문자에겐 공개 메뉴만 노출.
-const MEMBER_ROUTES = [{ to: '/schedule', label: 'Schedule' }]
+const MEMBER_ROUTES = [
+  { to: '/schedule', label: 'Schedule' },
+  { to: '/posts', label: 'Posts' },
+]
 
 function NavLinks({ linkClass, onClick, variant = 'desktop', routes = NAV_ROUTES }) {
   return routes.map((item) => {

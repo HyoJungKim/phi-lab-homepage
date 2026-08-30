@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { fetchPosts } from '../lib/publicData'
 import { usePageMeta } from '../lib/usePageMeta'
+import { useAuth } from '../contexts/AuthContext'
 
 // Posts 게시판 — 공지/소통 글 목록(표). News(행사 격자)와 역할이 다르다.
 // CSR: 글 올리면 재배포 없이 즉시 반영(prerender 제외).
@@ -14,7 +15,19 @@ function boardDate(iso) {
   return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()}.`
 }
 
+function Gate({ children }) {
+  return (
+    <div className="mx-auto max-w-[1200px] px-6 py-12">
+      <h1>Posts</h1>
+      <div className="mt-8 rounded-lg border border-rule bg-beige-50 px-6 py-10 text-center">
+        <div className="text-muted">{children}</div>
+      </div>
+    </div>
+  )
+}
+
 export default function Posts() {
+  const { isAuthenticated, isWhitelisted, loading: authLoading, user } = useAuth()
   const [items, setItems] = useState(null) // null=로딩, []=없음
   const [error, setError] = useState(null)
   usePageMeta({ title: 'Posts' })
@@ -52,6 +65,35 @@ export default function Posts() {
     e?.preventDefault()
     setSearch(query)
     setPage(1)
+  }
+
+  // ── 접근 제어 ──
+  if (authLoading) {
+    return <div className="mx-auto max-w-[1200px] px-6 py-12"><p className="text-muted">Loading…</p></div>
+  }
+  if (!isAuthenticated) {
+    return (
+      <Gate>
+        <p className="my-0 text-lg font-semibold text-brand-900">로그인이 필요합니다</p>
+        <p className="my-0 mt-2">연구실 구성원만 볼 수 있는 게시판입니다.</p>
+        <p className="mt-4 mb-0">
+          <Link to="/admin/login" className="no-underline">
+            <span className="rounded bg-brand-700 px-4 py-2 text-white">로그인</span>
+          </Link>
+        </p>
+      </Gate>
+    )
+  }
+  if (!isWhitelisted) {
+    return (
+      <Gate>
+        <p className="my-0 text-lg font-semibold text-brand-900">접근 권한이 없습니다</p>
+        <p className="my-0 mt-2">
+          <code>{user?.email}</code> 계정은 연구실 구성원으로 등록되어 있지 않습니다.
+        </p>
+        <p className="mt-2 mb-0">관리자에게 초대를 요청하세요. (philab.cuk@gmail.com)</p>
+      </Gate>
+    )
   }
 
   return (
