@@ -67,7 +67,7 @@ const COURSE_THEMES = [
     label: 'Database (RDB/SQL)',
     bg: '#f5e7e0',
     fg: '#9a4422',
-    titles: ['Healthcare Database'],
+    titles: ['Database for Healthcare'],
   },
   {
     label: 'Capstone / PBL',
@@ -78,8 +78,8 @@ const COURSE_THEMES = [
 ]
 const OTHER_THEME_COLOR = { bg: '#f1efe8', fg: '#5f5e5a' }
 
-// 아직 개설 전(예정) 과목 — 요약 칩에 'new' 표시.
-const UPCOMING_COURSES = new Set(['Healthcare Database'])
+// 아직 개설 전(예정) 과목 — 요약 칩에 'new' 표시. 개설되면 여기서 뺀다.
+const UPCOMING_COURSES = new Set()
 
 function CourseImages({ images }) {
   const openLightbox = useContext(LightboxContext)
