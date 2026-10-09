@@ -1,5 +1,27 @@
 [
   {
+    "id": "lee2026-gaming-depression",
+    "title": "Concurrent Associations of Gaming Time and Problematic Gaming with Depressive Symptoms in Children and Adolescents: A Three-Wave Cohort Study with Complementary Machine Learning Classification",
+    "authors": [
+      {
+        "name": "Lee Y"
+      },
+      {
+        "name": "Her JS"
+      },
+      {
+        "name": "Kim HJ",
+        "isPi": true
+      }
+    ],
+    "venue": "Healthcare",
+    "venueDetails": "14(19), 3315",
+    "year": 2026,
+    "doi": "10.3390/healthcare14193315",
+    "url": "https://doi.org/10.3390/healthcare14193315",
+    "category": "article"
+  },
+  {
     "id": "choo2026-covid-screening",
     "title": "Enhancing COVID-19 Screening Models With Epidemiological and Mobility Features: Machine-Learning Model Study",
     "authors": [
@@ -508,6 +530,59 @@
     "category": "article"
   },
   {
+    "id": "yoon2026-aromatase-msk-asco",
+    "title": "Disproportionality Analysis of Musculoskeletal and Connective Tissue Disorders Associated with Aromatase Inhibitors: A Real-World Pharmacovigilance Study",
+    "authors": [
+      {
+        "name": "Yoon JH",
+        "coFirst": true
+      },
+      {
+        "name": "Kim HJ",
+        "isPi": true,
+        "coFirst": true
+      },
+      {
+        "name": "Park YH"
+      }
+    ],
+    "venue": "ASCO Breakthrough 2026",
+    "location": "Raffles City Convention Centre, Singapore",
+    "date": "June 24, 2026",
+    "year": 2026,
+    "category": "international-presentation"
+  },
+  {
+    "id": "kim2026-ai-digital-health-hcic",
+    "title": "AI-Enabled Digital Health: From Clinical Data to Real-World Evidence in Modern Healthcare",
+    "authors": [
+      {
+        "name": "Kim HJ",
+        "isPi": true
+      }
+    ],
+    "venue": "HCIC 2026",
+    "location": "UMT School of Pharmacy, Pakistan",
+    "date": "June 11, 2026",
+    "year": 2026,
+    "category": "international-presentation"
+  },
+  {
+    "id": "kim2026-invisible-scribe-ksmo",
+    "title": "The Invisible Scribe: Capturing Adverse Events through Clinical Natural Language Processing and Ambient AI",
+    "authors": [
+      {
+        "name": "Kim HJ",
+        "isPi": true
+      }
+    ],
+    "venue": "KSMO 24th Symposium",
+    "location": "Intercontinental Parnas, Coex, Seoul, Korea",
+    "date": "May 16, 2026",
+    "year": 2026,
+    "category": "international-presentation"
+  },
+  {
     "id": "yoon2025-aromatase-ispor",
     "title": "Body weight-associated differences in adverse drug reaction profiles of aromatase inhibitors: A real-world pharmacovigilance study using FAERS Database",
     "authors": [
@@ -860,6 +935,39 @@
     "date": "October 16, 2013",
     "year": 2013,
     "category": "international-presentation"
+  },
+  {
+    "id": "kim2025-nurses-data-stewards-kssn",
+    "title": "Nurses as Data Stewards in the AI Era",
+    "authors": [
+      {
+        "name": "Kim HJ",
+        "isPi": true
+      }
+    ],
+    "venue": "Korean Society for Simulation in Nursing Winter Conference",
+    "location": "Ewha Womans University Seoul Hospital",
+    "date": "December 20, 2025",
+    "year": 2025,
+    "category": "national-presentation"
+  },
+  {
+    "id": "heo2025-faers-dedup-ksmi",
+    "title": "FAERS pharmacovigilance data deduplication methodology Evaluation of impact on drug-adverse reaction signal detection",
+    "authors": [
+      {
+        "name": "Heo JS"
+      },
+      {
+        "name": "Kim HJ",
+        "isPi": true
+      }
+    ],
+    "venue": "Spring Conference, The Korean Society of Medical Informatics",
+    "location": "Songdo Convensia, Incheon",
+    "date": "November 24, 2025",
+    "year": 2025,
+    "category": "national-presentation"
   },
   {
     "id": "kim2024-cgdm-ksmi-autumn",
