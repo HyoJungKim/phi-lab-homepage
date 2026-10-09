@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useLocation, useLoaderData } from 'react-router'
 import { fetchMembers } from '../lib/publicData'
 
 export async function loader() {
   return fetchMembers()
 }
-
-const TABS = ['Current Members', 'Alumni']
 
 function SocialLine({ member }) {
   const items = []
@@ -121,9 +119,9 @@ function AlumnusItem({ member }) {
     >
       <p className="my-0">
         <MemberName member={member} korClass="text-lg" engClass="text-[15px]" />
-        <span className="text-muted">
-          {' '}· {member.degree} · {member.graduatedYear}
-        </span>
+        {[member.degree, member.graduatedYear].filter(Boolean).map((v) => (
+          <span key={v} className="text-muted">{' '}· {v}</span>
+        ))}
       </p>
       {member.role && <p className="my-0 text-muted text-[15px]">{member.role}</p>}
       {member.currentAffiliation && (
@@ -148,23 +146,7 @@ function AlumnusItem({ member }) {
   )
 }
 
-function TabLink({ label, active, count, onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`mr-6 text-[15px] ${
-        active
-          ? 'text-ink underline underline-offset-[6px] decoration-1'
-          : 'text-muted hover:underline'
-      }`}
-    >
-      {label} <span className="text-meta">({count})</span>
-    </button>
-  )
-}
-
 export default function Members() {
-  const [activeTab, setActiveTab] = useState(TABS[0])
   const data = useLoaderData()
   const location = useLocation()
 
@@ -187,81 +169,57 @@ export default function Members() {
 
   const alumni = data.alumni
 
-  // Hash navigation: if URL has #<id>, force the tab that contains that
-  // member into view, then smooth-scroll to the card.
+  // Hash navigation: if URL has #<id>, smooth-scroll to that member's card.
   useEffect(() => {
     if (!location.hash) return
     const id = location.hash.slice(1)
-    const inAlumni = alumni.some((m) => m.id === id)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActiveTab(inAlumni ? 'Alumni' : 'Current Members')
     requestAnimationFrame(() => {
       const el = document.getElementById(id)
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
-  }, [location.hash, alumni])
+  }, [location.hash])
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-12">
       <h1>Members</h1>
 
-      <div className="mt-6 border-b border-rule pb-3">
-        <TabLink
-          label="Current Members"
-          active={activeTab === 'Current Members'}
-          count={data.current.length}
-          onClick={() => setActiveTab('Current Members')}
-        />
-        <TabLink
-          label="Alumni"
-          active={activeTab === 'Alumni'}
-          count={alumni.length}
-          onClick={() => setActiveTab('Alumni')}
-        />
-      </div>
-
-      {activeTab === 'Current Members' && (
+      {professor && (
         <>
-          {professor && (
-            <>
-              <h2>{professor.role || piRole || 'Principal Investigator'}</h2>
-              <ProfessorRow member={professor} />
-            </>
-          )}
-          {groups.map((g) => (
-            <section key={g.role}>
-              <h2>{g.role}</h2>
-              <div>
-                {g.members.map((member) => (
-                  <StudentRow key={member.id} member={member} />
-                ))}
-              </div>
-            </section>
-          ))}
-          {noRole.length > 0 && (
-            <section>
-              <h2>Members</h2>
-              <div>
-                {noRole.map((member) => (
-                  <StudentRow key={member.id} member={member} />
-                ))}
-              </div>
-            </section>
-          )}
+          <h2>{professor.role || piRole || 'Principal Investigator'}</h2>
+          <ProfessorRow member={professor} />
         </>
       )}
+      {groups.map((g) => (
+        <section key={g.role}>
+          <h2>{g.role}</h2>
+          <div>
+            {g.members.map((member) => (
+              <StudentRow key={member.id} member={member} />
+            ))}
+          </div>
+        </section>
+      ))}
+      {noRole.length > 0 && (
+        <section>
+          <h2>Members</h2>
+          <div>
+            {noRole.map((member) => (
+              <StudentRow key={member.id} member={member} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      {activeTab === 'Alumni' && (
-        <>
-          <h2>
-            졸업생 {alumni.length}명
-          </h2>
+      {/* 졸업·수료 멤버 — 현재 멤버 목록 맨 아래 별도 구분 */}
+      {alumni.length > 0 && (
+        <section>
+          <h2>Alumni</h2>
           <div>
             {alumni.map((member) => (
               <AlumnusItem key={member.id} member={member} />
             ))}
           </div>
-        </>
+        </section>
       )}
     </div>
   )
