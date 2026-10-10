@@ -83,22 +83,6 @@
       "status": "current"
     },
     {
-      "id": "smlim",
-      "name": "Sang Min Lim",
-      "role": "Undergraduate Researcher",
-      "degree": "Undergraduate",
-      "year": null,
-      "photo": "https://i0.wp.com/philabcuk.org/wp-content/uploads/2025/12/ec9e84ec8381ebafbc_eca69debaa85ec82aceca784.jpg?resize=750%2C964&ssl=1",
-      "email": null,
-      "linkedin": null,
-      "googleScholar": null,
-      "researchInterests": [
-        "Clinical Informatics",
-        "Health Services Research"
-      ],
-      "status": "current"
-    },
-    {
       "id": "jhhan",
       "name": "Jae Hyeok Han",
       "role": "Undergraduate Researcher",
@@ -115,5 +99,22 @@
       "status": "current"
     }
   ],
-  "alumni": []
+  "alumni": [
+    {
+      "id": "smlim",
+      "name": "Sang Min Lim",
+      "role": "Undergraduate Researcher",
+      "degree": "Undergraduate",
+      "year": null,
+      "photo": "https://i0.wp.com/philabcuk.org/wp-content/uploads/2025/12/ec9e84ec8381ebafbc_eca69debaa85ec82aceca784.jpg?resize=750%2C964&ssl=1",
+      "email": null,
+      "linkedin": null,
+      "googleScholar": null,
+      "researchInterests": [
+        "Clinical Informatics",
+        "Health Services Research"
+      ],
+      "status": "alumni"
+    }
+  ]
 }
